@@ -3,34 +3,45 @@ const STORGET_KEY = 'feedback-form-state';
 const refs = {
   form: document.querySelector('.feedback-form'),
   textarea: document.querySelector('.feedback-form textarea'),
-  input: document.querySelector('.feedback-form input')
+  input: document.querySelector('.feedback-form input'),
 };
+let formData = {};
 populateTextarea();
 refs.form.addEventListener('submit', onFromSubmit);
 
 function onFromSubmit(event) {
   event.preventDefault();
-  if ((refs.input.value && refs.textarea.value) === "") {
-    const message = "Fill in all fields !";
+
+  if ((refs.input.value && refs.textarea.value) === '') {
+    const message = 'Fill in all fields !';
     alert(message);
   } else {
+    console.log(JSON.parse(localStorage.getItem(STORGET_KEY)));
     event.target.reset();
     localStorage.removeItem(STORGET_KEY);
+    formData = {};
   }
 }
 
 function populateTextarea() {
-  const saveMessage =localStorage.getItem(STORGET_KEY);
+  const saveMessage = JSON.parse(localStorage.getItem(STORGET_KEY));
   if (saveMessage) {
-    const parseKey = JSON.parse(saveMessage);
-    refs.input.value = parseKey.email;
-    refs.textarea.value = parseKey.message;
+    for (key in saveMessage) {
+      formData[key] = saveMessage[key];
+      refs.form.elements[key].value = saveMessage[key];
+    }
   }
 }
-const formData = {};
 
-refs.form.addEventListener('input', throttle(event => {
-  formData[event.target.name] = event.target.value;
-  localStorage.setItem(STORGET_KEY, JSON.stringify(formData));
-},500));
-console.log(formData);
+refs.form.addEventListener(
+  'input',
+  throttle(event => {
+    formData[event.target.name] = event.target.value;
+
+    localStorage.setItem(STORGET_KEY, JSON.stringify(formData));
+  }, 500)
+);
+
+//   const parseKey = JSON.parse(saveMessage);
+//   parseKey.email === undefined ? refs.input.value = '' : (refs.input.value = parseKey.email, formData.email = parseKey.email);
+//   parseKey.message === undefined ? refs.textarea.value = '' : (refs.textarea.value = parseKey.message, formData.message = parseKey.message);
