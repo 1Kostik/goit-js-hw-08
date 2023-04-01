@@ -26,7 +26,7 @@ function onFromSubmit(event) {
 function populateTextarea() {
   const saveMessage = JSON.parse(localStorage.getItem(STORGET_KEY));
   if (saveMessage) {
-    for (key in saveMessage) {
+    for (const key in saveMessage) {
       formData[key] = saveMessage[key];
       refs.form.elements[key].value = saveMessage[key];
     }
